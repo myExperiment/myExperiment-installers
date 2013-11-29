@@ -1,6 +1,6 @@
 #!/bin/bash
 install_dir="/var/rails/myexperiment" # Where to checkout the myExperiment SVN
-branch="trunk"
+branch="master"
 ruby_version="1.8.7"
 mysql_root_password="changeme"
 fq_server_name="hostname.domain"

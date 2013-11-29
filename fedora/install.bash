@@ -18,7 +18,7 @@ echo "$settings_patch" > settings.patch || { echo "Could not write settings patc
 
 echo "Installing required Yum packages"
 sudo yum update -y || { echo "Failed to update apt-get. Aborting ..."; exit 6; }
-sudo -n yum install -y subversion make patch gcc glibc-devel gcc-c++ mysql mysql-devel mysql-server java libxml2-devel libxslt-devel autoconf glibc-devel ncurses-devel automake libtool bison openssl openssl-devel curl libcurl libcurl-devel readline readline-devel ImageMagick-devel graphviz sendmail sendmail-cf policycoreutils-python || { echo "Failed to install required Yum packages. Aborting ..."; exit 7; }
+sudo -n yum install -y git make patch gcc glibc-devel gcc-c++ mysql mysql-devel mysql-server java libxml2-devel libxslt-devel autoconf glibc-devel ncurses-devel automake libtool bison openssl openssl-devel curl libcurl libcurl-devel readline readline-devel ImageMagick-devel graphviz sendmail sendmail-cf policycoreutils-python || { echo "Failed to install required Yum packages. Aborting ..."; exit 7; }
 
 echo "Configuring Apache, MySQL and Sendmail"
 sudo chkconfig mysqld on || { echo "Failed to MySQL to applications started at boottime. Aborting ..."; exit 8; }
@@ -42,8 +42,11 @@ rvm --default use ${ruby_version} || { echo "Could not set Ruby ${ruby_version} 
 echo "Checking out myExperiment codebase from SVN"
 sudo mkdir -p ${install_dir} || { echo "Could not create directory ${install_dir} or one of its parent directories. Aborting ..."; exit 21; }
 sudo chown ${USER}:${USER} ${install_dir} || { echo "Could not update permissions on ${install_dir}. Aborting ..."; exit 22; }
-svn checkout svn://rubyforge.org/var/svn/myexperiment/$branch $install_dir || { echo "Could not checkout SVN to $install_dir. Aborting ..."; exit 24; }
-cd ${install_dir}/config/ || { echo "Could not find config directory for myExperiment. Aborting ..."; exit 25; }
+git clone https://github.com/myExperiment/myExperiment.git ${install_dir} || { echo "Could not git clone to ${install_dir}. Aborting ..."; exit 24; }
+cd ${install_dir}
+git checkout ${branch} || { echo "Could not checkout ${branch}. Aborting ..."; exit 24; }
+
+cd config/ || { echo "Could not find config directory for myExperiment. Aborting ..."; exit 25; }
 
 echo "Setting up config files for myExperiment"
 cat database.yml.pre | sed "s/username: root/username: $mysql_user_name/" | sed "s/password:/password: $mysql_user_password/" > database.yml || { echo "Could not create database.yml file with appropriate configuration settings. Aborting ..."; exit 26; }

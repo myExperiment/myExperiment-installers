@@ -33,8 +33,10 @@ rvm --default use ${ruby_version} || { echo "Could not set Ruby ${ruby_version} 
 echo "Checking out myExperiment codebase from SVN"
 sudo mkdir -p ${install_dir} || { echo "Could not create directory ${install_dir} or one of its parent directories. Aborting ..."; exit 12; }
 sudo chown ${USER}:${USER} ${install_dir} || { echo "Could not update permissions on ${install_dir}. Aborting ..."; exit 13; }
-svn checkout svn://rubyforge.org/var/svn/myexperiment/${branch} ${install_dir} || { echo "Could not checkout SVN to ${install_dir}. Aborting ..."; exit 14; }
-cd ${install_dir}/config/ || { echo "Could not find config directory for myExperiment. Aborting ..."; exit 15; }
+git clone https://github.com/myExperiment/myExperiment.git ${install_dir} || { echo "Could not git clone to ${install_dir}. Aborting ..."; exit 14; }
+cd ${install_dir}
+git checkout ${branch} || { echo "Could not checkout ${branch}. Aborting ..."; exit 14; }
+cd config/ || { echo "Could not find config directory for myExperiment. Aborting ..."; exit 15; }
 
 echo "Setting up config files for myExperiment"
 cat database.yml.pre | sed "s/password:/password: ${mysql_root_password}/" > database.yml || { echo "Could not create database.yml file with appropriate configuration settings. Aborting ..."; exit 16; }
